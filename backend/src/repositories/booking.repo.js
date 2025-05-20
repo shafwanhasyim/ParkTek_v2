@@ -224,6 +224,8 @@ exports.getOccupiedSlotIds = async (currentTimestamp = new Date()) => {
             ? currentTimestamp.toISOString()
             : new Date(currentTimestamp).toISOString();
 
+        // Get all slots that have active bookings (pending or booked) where current time is 
+        // between start and end time
         const result = await db.query(
             `SELECT DISTINCT slot_id FROM bookings 
              WHERE status IN ('pending', 'booked') 

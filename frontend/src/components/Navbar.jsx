@@ -22,7 +22,7 @@ const Navbar = () => {
             <Link to="/" className="flex-shrink-0">
               <img className="h-8 w-auto" src="/OnlyLogo.png" alt="App Logo" />
             </Link>
-            <div className="ml-4 text-xl font-bold text-white">Parktek</div>
+            <div className="ml-4 text-xl font-bold text-white">ParkTek</div>
           </div>
 
           {/* Desktop Navigation */}

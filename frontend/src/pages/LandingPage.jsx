@@ -16,7 +16,7 @@ const LandingPage = () => {
             <div className="lg:w-1/2">
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
                 <span className="block">Welcome to</span>
-                <span className="block text-blue-600">Parktek</span>
+                <span className="block text-blue-600">ParkTek</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg">
                 The easiest way to find and book parking spots in your area.

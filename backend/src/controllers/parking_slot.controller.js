@@ -7,13 +7,16 @@ exports.getAllParkingSlots = async (req, res) => {
         // Get all parking slots
         const parkingSlots = await parkingSlotRepo.getAllParkingSlots();
 
-        // Get IDs of currently occupied slots
+        // Get IDs of currently occupied slots (slots with active bookings at current time)
         const occupiedSlotIds = await bookingRepo.getOccupiedSlotIds();
 
         // Add is_occupied field to each slot
+        // A slot is considered occupied if:
+        // 1. It has a current active booking (in occupiedSlotIds) OR
+        // 2. It is inactive (is_active = false)
         const slotsWithOccupancy = parkingSlots.map(slot => ({
             ...slot,
-            is_occupied: occupiedSlotIds.includes(slot.id)
+            is_occupied: !slot.is_active || occupiedSlotIds.includes(slot.id)
         }));
 
         return res.status(200).json(baseResponse.success("Parking slots fetched successfully", slotsWithOccupancy));

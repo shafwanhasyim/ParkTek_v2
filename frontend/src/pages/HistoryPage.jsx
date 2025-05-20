@@ -10,7 +10,6 @@ const HistoryPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
-  const [timeFilter, setTimeFilter] = useState("all");
 
   useEffect(() => {
     fetchBookingHistory();
@@ -124,32 +123,11 @@ const HistoryPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-  const filteredBookings = bookings.filter((booking) => {
-    const now = new Date();
-    const startTime = new Date(booking.start_time);
-    const endTime = new Date(booking.end_time);
-
-    // Status filter
+  };  const filteredBookings = bookings.filter((booking) => {
+    // Status filter only
     if (filter !== "all" && booking.status !== filter) {
       return false;
     }
-
-    // Time filter
-    if (timeFilter === "active") {
-      return (
-        now >= startTime &&
-        now <= endTime &&
-        ["pending", "booked"].includes(booking.status)
-      );
-    } else if (timeFilter === "upcoming") {
-      return now < startTime && ["pending", "booked"].includes(booking.status);
-    } else if (timeFilter === "past") {
-      return (
-        now > endTime || ["cancelled", "completed"].includes(booking.status)
-      );
-    }
-
     return true;
   });
 
@@ -174,8 +152,7 @@ const HistoryPage = () => {
           <div className="mb-6 p-4 bg-red-100 text-red-700 rounded">
             {error}
           </div>
-        )}
-        <Card className="mb-6">
+        )}        <Card className="mb-6">
           <h2 className="text-xl font-semibold mb-3">Booking Summary</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-gray-50 p-3 rounded-lg text-center">
@@ -184,37 +161,17 @@ const HistoryPage = () => {
               </p>
               <p className="text-sm text-gray-500">Total Bookings</p>
             </div>
+            <div className="bg-yellow-50 p-3 rounded-lg text-center">
+              <p className="text-2xl font-bold text-yellow-700">
+                {bookings.filter((b) => b.status === "pending").length}
+              </p>
+              <p className="text-sm text-yellow-500">Pending</p>
+            </div>
             <div className="bg-blue-50 p-3 rounded-lg text-center">
               <p className="text-2xl font-bold text-blue-700">
-                {
-                  bookings.filter((b) => {
-                    const now = new Date();
-                    const startTime = new Date(b.start_time);
-                    const endTime = new Date(b.end_time);
-                    return (
-                      now >= startTime &&
-                      now <= endTime &&
-                      ["pending", "booked"].includes(b.status)
-                    );
-                  }).length
-                }
+                {bookings.filter((b) => b.status === "booked").length}
               </p>
-              <p className="text-sm text-blue-500">Active</p>
-            </div>
-            <div className="bg-purple-50 p-3 rounded-lg text-center">
-              <p className="text-2xl font-bold text-purple-700">
-                {
-                  bookings.filter((b) => {
-                    const now = new Date();
-                    const startTime = new Date(b.start_time);
-                    return (
-                      now < startTime &&
-                      ["pending", "booked"].includes(b.status)
-                    );
-                  }).length
-                }
-              </p>
-              <p className="text-sm text-purple-500">Upcoming</p>
+              <p className="text-sm text-blue-500">Booked</p>
             </div>
             <div className="bg-green-50 p-3 rounded-lg text-center">
               <p className="text-2xl font-bold text-green-700">
@@ -224,8 +181,7 @@ const HistoryPage = () => {
             </div>
           </div>
         </Card>
-        <Card className="mb-6">
-          <div className="mb-3">
+        <Card className="mb-6">          <div className="mb-3">
             <h3 className="text-lg font-medium mb-2">Filter by Status</h3>
             <div className="flex flex-wrap gap-2">
               <button
@@ -280,65 +236,15 @@ const HistoryPage = () => {
               </button>
             </div>
           </div>
-
-          <div className="mt-4">
-            <h3 className="text-lg font-medium mb-2">Filter by Time</h3>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setTimeFilter("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${
-                  timeFilter === "all"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                }`}
-              >
-                All Times
-              </button>
-              <button
-                onClick={() => setTimeFilter("active")}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${
-                  timeFilter === "active"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                }`}
-              >
-                Active Now
-              </button>
-              <button
-                onClick={() => setTimeFilter("upcoming")}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${
-                  timeFilter === "upcoming"
-                    ? "bg-purple-500 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                }`}
-              >
-                Upcoming
-              </button>
-              <button
-                onClick={() => setTimeFilter("past")}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${
-                  timeFilter === "past"
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                }`}
-              >
-                Past
-              </button>
-            </div>
-          </div>
-        </Card>{" "}
-        <div className="flex justify-between items-center mb-4">
+        </Card>{" "}        <div className="flex justify-between items-center mb-4">
           <p className="text-gray-700">
             <span className="font-medium">{filteredBookings.length}</span>{" "}
             {filteredBookings.length === 1 ? "booking" : "bookings"} found
           </p>
 
-          {filteredBookings.length > 0 && (
+          {filteredBookings.length > 0 && filter !== "all" && (
             <p className="text-sm text-gray-500">
-              Showing {filter !== "all" ? filter : ""}
-              {filter !== "all" && timeFilter !== "all" ? ", " : ""}
-              {timeFilter !== "all" ? timeFilter : ""}
-              {filter !== "all" || timeFilter !== "all" ? " bookings" : ""}
+              Showing {filter} bookings
             </p>
           )}
         </div>

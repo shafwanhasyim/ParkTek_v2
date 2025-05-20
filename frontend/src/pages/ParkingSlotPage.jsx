@@ -44,7 +44,6 @@ const ParkingSlotPage = () => {
       [name]: value,
     });
   };
-
   const filteredSlots = slots.filter((slot) => {
     // Filter by location
     if (
@@ -58,20 +57,12 @@ const ParkingSlotPage = () => {
     if (filters.type && slot.type !== filters.type) {
       return false;
     }
+    
     // Filter by availability
-    if (
-      filters.availability === "available" &&
-      (!slot.is_active || slot.is_occupied)
-    ) {
+    if (filters.availability === "available" && (!slot.is_active || slot.is_occupied)) {
       return false;
     }
-    if (
-      filters.availability === "occupied" &&
-      (!slot.is_occupied || !slot.is_active)
-    ) {
-      return false;
-    }
-    if (filters.availability === "inactive" && slot.is_active) {
+    if (filters.availability === "occupied" && (slot.is_active && !slot.is_occupied)) {
       return false;
     }
 
@@ -112,37 +103,21 @@ const ParkingSlotPage = () => {
           <div className="mb-6 p-4 bg-red-100 text-red-700 rounded">
             {error}
           </div>
-        )}
-        <div className="mb-6">
+        )}        <div className="mb-6">
           <Card>
             <h2 className="text-xl font-semibold mb-3">Parking Overview</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-50 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold text-gray-700">
-                  {slots.length}
-                </p>
-                <p className="text-sm text-gray-500">Total Slots</p>
-              </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="bg-green-50 p-3 rounded-lg text-center">
                 <p className="text-2xl font-bold text-green-700">
-                  {
-                    slots.filter((slot) => slot.is_active && !slot.is_occupied)
-                      .length
-                  }
+                  {slots.filter(s => s.is_active && !s.is_occupied).length}
                 </p>
                 <p className="text-sm text-green-500">Available</p>
               </div>
               <div className="bg-yellow-50 p-3 rounded-lg text-center">
                 <p className="text-2xl font-bold text-yellow-700">
-                  {slots.filter((slot) => slot.is_occupied).length}
+                  {slots.length - slots.filter(s => s.is_active && !s.is_occupied).length}
                 </p>
                 <p className="text-sm text-yellow-500">Occupied</p>
-              </div>
-              <div className="bg-red-50 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold text-red-700">
-                  {slots.filter((slot) => !slot.is_active).length}
-                </p>
-                <p className="text-sm text-red-500">Inactive</p>
               </div>
             </div>
           </Card>
@@ -201,8 +176,7 @@ const ParkingSlotPage = () => {
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Availability
-              </label>{" "}
-              <select
+              </label>{" "}              <select
                 id="availability"
                 name="availability"
                 value={filters.availability}
@@ -212,16 +186,14 @@ const ParkingSlotPage = () => {
                 <option value="all">All</option>
                 <option value="available">Available</option>
                 <option value="occupied">Occupied</option>
-                <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>
-        </Card>{" "}
-        <div className="mb-4">
+        </Card>{" "}        <div className="mb-4">
           <p className="text-lg">
             {filteredSlots.length} slots found •{" "}
             {filteredSlots.filter((s) => s.is_active && !s.is_occupied).length}{" "}
-            available
+            available • {filteredSlots.length - filteredSlots.filter((s) => s.is_active && !s.is_occupied).length} occupied
           </p>
         </div>
         {Object.keys(slotsByLocation).length === 0 ? (
@@ -235,43 +207,31 @@ const ParkingSlotPage = () => {
             <div key={location} className="mb-8">
               <h2 className="text-xl font-semibold mb-3">{location}</h2>{" "}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {slots.map((slot) => (
-                  <Card
+                {slots.map((slot) => (                  <Card
                     key={slot.id}
                     className={`${
-                      !slot.is_active
-                        ? "border-red-300 border-l-4"
-                        : slot.is_occupied
-                        ? "border-yellow-500 border-l-4"
-                        : "border-green-500 border-l-4"
+                      slot.is_active && !slot.is_occupied
+                        ? "border-green-500 border-l-4"
+                        : "border-yellow-500 border-l-4"
                     } hover:shadow-lg transition-shadow duration-200`}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-medium">Slot #{slot.id}</h3>
-                      <span
+                      <h3 className="text-lg font-medium">Slot #{slot.id}</h3>                      <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          !slot.is_active
-                            ? "bg-red-100 text-red-800"
-                            : slot.is_occupied
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
+                          slot.is_active && !slot.is_occupied
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
-                        {!slot.is_active
-                          ? "Inactive"
-                          : slot.is_occupied
-                          ? "Occupied"
-                          : "Available"}
+                        {slot.is_active && !slot.is_occupied
+                          ? "Available"
+                          : "Occupied"}
                       </span>
-                    </div>
-
-                    <div
+                    </div>                    <div
                       className={`mb-3 p-2 ${
-                        !slot.is_active
-                          ? "bg-red-50"
-                          : slot.is_occupied
-                          ? "bg-yellow-50"
-                          : "bg-green-50"
+                        slot.is_active && !slot.is_occupied
+                          ? "bg-green-50"
+                          : "bg-yellow-50"
                       } rounded-lg`}
                     >
                       <p className="mb-1">
@@ -279,11 +239,9 @@ const ParkingSlotPage = () => {
                       </p>
                       <p>
                         <span className="font-medium">Status:</span>{" "}
-                        {!slot.is_active
-                          ? "This slot is not available for booking"
-                          : slot.is_occupied
-                          ? "Currently in use"
-                          : "Ready for booking"}
+                        {slot.is_active && !slot.is_occupied
+                          ? "Ready for booking"
+                          : "Currently unavailable"}
                       </p>
                     </div>
                     <div className="flex space-x-2">
