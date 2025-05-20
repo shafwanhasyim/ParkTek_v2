@@ -39,10 +39,15 @@ home ini merupakan default page ketika sudah membuat akun dan user bisa memulai 
 
 ![home](https://imgur.com/CYW6xCE.jpg)
 
-### History Page
+### User History
 pada page ini menunjukkan history atau riwayat pesanan yang telah dibuat oleh user, pada page ini juga menampilkan qr code dari pesanan yang telah dibuat.
 
 ![history](https://imgur.com/MC8qnRV.jpg)
+
+### Parking History
+Halaman ini akan menampilkan riwayat booking di tempat parkir tersebut. 
+
+![parkinghistory](https://imgur.com/0sqFwdR.jpg)
 
 ### Parking Slot Page
 pada page ini bisa menunjukkan slot parkir yang tersedia, yang sudah terisi, dan yang tidak aktif atau tidak dapat digunakan.
