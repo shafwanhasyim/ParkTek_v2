@@ -1,0 +1,10 @@
+/* Custom styles for our parking application */
+body {
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Ensure all content pages have appropriate minimum height */
+.min-h-screen {
+  min-height: calc(100vh - 64px); /* Accounting for navbar height */
+}
